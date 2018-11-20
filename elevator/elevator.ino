@@ -1,5 +1,6 @@
 #include<Arduino.h>
 #include<MsTimer2.h>
+#include<LiquidCrystal.h>
 
 #define NUM_OF_ORDER 15 //有13条指令，为方便处理，补全为15条
 #define NUM_OF_FLOUR 5 //五层
@@ -7,6 +8,10 @@
 #define MAX_VLCT 200 //最大速度为200mm/100ms
 #define OPEN_PIN 2 //开门引脚
 #define CLOSE_PIN 3 //关门引脚
+
+// 初始化针脚
+const int rs = 9, en = 8, d4 = 7, d5 = 6, d6 = 5, d7 = 4;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 int height=0; //电梯高度/mm
 int drct=0; //运行方向，0为静止，1为向上，2为向下
@@ -26,10 +31,17 @@ void setup() {
     pinMode(CLOSE_PIN,INPUT);
     attachInterrupt(0,open,RISING); //0对应2号引脚
     attachInterrupt(1,close,RISING); //1对应3号引脚
+    lcd.begin(16, 2);
+    while(Serial.available()<=0); //等待开始
+    Serial.read(); //读掉's'
 }
 
 void loop(){
     getorder(); //更新命令串
+    for(i=0;i<NUM_OF_ORDER;i++){ //显示指令串
+        lcd.setCursor(i,0);
+        lcd.write(order[i]+48);
+    }
     search(); //搜索指令，赋值给target，无指令则target=0
     if(target==0){
         drct==0;
@@ -60,15 +72,15 @@ void loop(){
 }
 
 void getorder(){ //更新指令串
-    Serial.println('o'); //发出获取指令串的指令
-    while(Serial.available()<=0);
+    Serial.print('o'); //发出获取指令串的指令
     for(i=0;i<NUM_OF_ORDER;i++){ //同步无序指令串
-        order[i]=Serial.read()-60;
+        while(Serial.available()<=0);
+        order[i]=Serial.read();
     }
 }
 
 void delorder(){ //整楼层消除命令信号
-    Serial.println(char((target-1)*3+drct)); //楼层数*3-1+运行方向
+    Serial.print(char((target-1)*3+drct)); //楼层数*3-1+运行方向
 }
 
 void search(){ //搜索指令，赋给target,无指令则target=0
@@ -179,5 +191,5 @@ void back(){
 }
 
 void show(){
-    Serial.println(char((height/3000)*3+drct+20)); //输出
+    Serial.print(char((height/3000)*3+drct+20)); //输出
 }

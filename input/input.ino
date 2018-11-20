@@ -21,6 +21,7 @@ flag下标-指令-引脚
 14-五楼下-9
 无-开门-红外+
 无-关门-红外-
+无-开始-13
 */
 
 
@@ -29,11 +30,11 @@ flag下标-指令-引脚
 #define REMOTE_PIN 10 //定义红外接收器的引脚
 #define OPEN_PIN 11 //开门
 #define CLOSE_PIN 12 //关门
+#define START_PIN 13 //开始键，重置键
 
 char order[NUM_OF_ORDER]={'\0'}; //无序指令串
 int i;
 char t;
-int count=0; //指令数
 int drct=0; //运行方向，0为静止，1为向上，2为向下
 
 IRrecv irrecv(REMOTE_PIN); 
@@ -44,11 +45,14 @@ void setup(){
         pinMode(i,INPUT);
 	for(i=11;i<13;i++)
 		pinMode(i,OUTPUT);
+	pinMode(START_PIN,INPUT);
     Serial.begin(9600);
     irrecv.enableIRIn(); //启动接收器
+	while(digitalRead(START_PIN)==LOW); //等待开始
+	Serial.print('s'); //向elevator发送开始信号
 }
 
-void loop() {
+void loop(){
 	check();
 	if(Serial.available()>0){
 		t=Serial.peek();
@@ -65,71 +69,48 @@ void loop() {
 
 void check(){ //检测输入
 	//检测按钮输入
-	if(digitalRead(2)==1&&order[1]==0){ //一楼上
+	if(digitalRead(2)==1){ //一楼上
 		order[1]=1;
-		count++;
 	}
-	if(digitalRead(3)==1&&order[4]==0){ //二楼上
+	if(digitalRead(3)==1){ //二楼上
 		order[4]=1;
-		count++;
 	}
-	if(digitalRead(4)==1&&order[5]==0){ //二楼下
+	if(digitalRead(4)==1){ //二楼下
 		order[5]=1;
-		count++;
 	}
-	if(digitalRead(5)==1&&order[7]==0){ //三楼上
+	if(digitalRead(5)==1){ //三楼上
 		order[7]=1;
-		count++;
 	}
-	if(digitalRead(6)==1&&order[8]==0){ //三楼下
+	if(digitalRead(6)==1){ //三楼下
 		order[8]=1;
-		count++;
 	}
-	if(digitalRead(7)==1&&order[10]==0){ //四楼上
+	if(digitalRead(7)==1){ //四楼上
 		order[10]=1;
-		count++;
 	}
-	if(digitalRead(8)==1&&order[11]==0){ //四楼下
+	if(digitalRead(8)==1){ //四楼下
 		order[11]=1;
-		count++;
 	}
-	if(digitalRead(9)==1&&order[14]==0){ //五楼下
+	if(digitalRead(9)==1){ //五楼下
 		order[14]=1;
-		count++;
 	}
 	//接收遥控器信号
     if(irrecv.decode(&results)){ 
 		// Serial.println(results.value, HEX); //以16进制换行输出接收代码
 		switch(results.value){
 		case 0xFF30CF: //一楼
-			if(order[0]==0){
-				order[0]=1;
-				count++;
-			}
+			order[0]=1;
 			break;
 		case 0xFF18E7: //二楼
-			if(order[3]==0){
-				order[3]=1;
-				count++;
-			}
+			order[3]=1;
 			break;
 		case 0xFF7A85: //三楼
-			if(order[6]==0){
-				order[6]=1;
-				count++;
-			}
+			order[6]=1;
 			break;
 		case 0xFF10EF: //四楼
-			if(order[9]==0){
-				order[9]=1;
-				count++;
-			}
+			order[9]=1;
 			break;
 		case 0xFF38C7: //五楼
-			if(order[12]==0){
-				order[12]=1;
-				count++;
-			}
+			order[12]=1;
 			break;
 		case 0xFFA857: //开门
 			digitalWrite(OPEN_PIN,HIGH);
