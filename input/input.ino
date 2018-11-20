@@ -59,7 +59,11 @@ void loop(){
 		if(t=='o'){ //发送无序指令串
 			Serial.read();
 			sendorder();
-		}			
+		}
+		else if(t=='b'){
+			Serial.read();
+			order[0]=1;
+		}
 		else if(t>=0&&t<NUM_OF_ORDER){ //删除对应指令
 			Serial.read();
 			delorder(t);

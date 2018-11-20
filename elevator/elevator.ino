@@ -43,6 +43,8 @@ void loop(){
         lcd.write(order[i]+48);
     }
     search(); //搜索指令，赋值给target，无指令则target=0
+    lcd.setCursor(0,1);
+    lcd.print(target);
     if(target==0){
         drct==0;
         //返回一层计时
@@ -53,7 +55,7 @@ void loop(){
         }
         stoptime=millis();
         if(stoptime-starttime>=60000)
-            order[0]=check; //使开关门能够刷新计时
+            Serial.print('b'); //发送返回一层指令
         return;
     }
     check=0;
@@ -84,22 +86,25 @@ void delorder(){ //整楼层消除命令信号
 }
 
 void search(){ //搜索指令，赋给target,无指令则target=0
+    int sd=safedistance();
 	if(drct==0)
         drct=1;
 	if(drct==1){
-        i=safedistance();
-        i=(height+i)/3000-((i+height)%3000==0)+2; //计算安全停靠楼层
+        i=(height+sd)/3000-((sd+height)%3000==0)+2; //计算安全停靠楼层
 		if(searchup(i)==1)
 			return;
 		if(searchdown(NUM_OF_FLOUR)==1)
 			return;
+        if(searchup(1)==1)
+            return;
 	}
-	if(drct==2){
-        i=safedistance();
-        i=(height-i)/3000+1; //计算安全停靠楼层
+	else if(drct==2){
+        i=(height-sd)/3000+1; //计算安全停靠楼层
 		if(searchdown(i)==1)
             return;
         if(searchup(1)==1)
+            return;
+        if(searchdown(NUM_OF_FLOUR)==1)
             return;
 	}
 	target=0;
@@ -127,7 +132,7 @@ int searchdown(int p){ //向下搜索指令，p为开始楼层数
 }
 
 int safedistance(){ //计算安全距离
-    return (vlct*vlct/2/ACCELERATION);
+    return ((long)vlct*vlct/2/ACCELERATION); //long防止int溢出
 }
 
 void move(){ //根据指令更新电梯状态(方向，高度，速度)
