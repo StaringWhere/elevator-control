@@ -16,7 +16,6 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 int height=0; //电梯高度/mm
 int drct=0; //运行方向，0为静止，1为向上，2为向下
 int vlct=0; //电梯速度/(mm/100ms)
-char t;
 int i;
 char order[NUM_OF_ORDER]={'\0'}; //无序指令串
 int target=0; //目标楼层/层,0代表无指令
@@ -37,6 +36,7 @@ void setup() {
 }
 
 void loop(){
+    show();
     getorder(); //更新命令串
     for(i=0;i<NUM_OF_ORDER;i++){ //显示指令串
         lcd.setCursor(i,0);
@@ -46,7 +46,7 @@ void loop(){
     lcd.setCursor(0,1);
     lcd.print(target);
     if(target==0){
-        drct==0;
+        drct=0;
         //返回一层计时
         if(hold==0){
             hold=1;
@@ -61,10 +61,7 @@ void loop(){
     hold=0;
     move(); //根据目标更新电梯状态(方向，高度，速度)
     if(height==(target-1)*3000){ //到达目标楼层
-        //继承指令方向，若指令无方向，则继承之前电梯方向（search取消了drct为0的可能）
-        if(order[(target-1)*3+drct]==1); 
-        else if(order[(target-1)*3+3-drct]==1)
-            drct=3-drct;
+        inheritdrct(); //继承指令方向
         delorder(); //删除已完成指令
     }
     delay(100);
@@ -84,9 +81,7 @@ void delorder(){ //整楼层消除命令信号
 
 void search(){ //搜索指令，赋给target,无指令则target=0
     int sd=safedistance();
-	if(drct==0)
-        drct=1;
-	if(drct==1){
+	if(drct==1||drct==0){
         i=(height+sd)/3000-((sd+height)%3000==0)+2; //计算安全停靠楼层
 		if(searchup(i)==1)
 			return;
@@ -136,7 +131,7 @@ void move(){ //根据指令更新电梯状态(方向，高度，速度)
     int distance=(target-1)*3000-height; //距离目标楼层的距离（有正负）
     int sd=safedistance(); //安全距离
     if(distance==0)
-        return;
+        return; //方向不变
     if(distance>0)
         drct=1;
     else
@@ -146,8 +141,8 @@ void move(){ //根据指令更新电梯状态(方向，高度，速度)
         if(vlct<MAX_VLCT){
             int distancetemp2=abs(distance)-vlct-ACCELERATION/2; //保持100ms加速后距离目标楼层的距离（有正负）
             if(distancetemp2>=sd){
-                vlct+=ACCELERATION;
                 height+=(3-2*drct)*(vlct+ACCELERATION/2); //(3-2*drct)是根据方向决定加减
+                vlct+=ACCELERATION;
             }
             else{
                 height+=(3-2*drct)*vlct;
@@ -157,10 +152,11 @@ void move(){ //根据指令更新电梯状态(方向，高度，速度)
             height+=(3-2*drct)*vlct;
     }
     else if(distancetemp<safedistance()&&vlct>ACCELERATION){ //需要减速且没到最后100ms
+            height+=(3-2*drct)*(vlct-ACCELERATION/2);
             vlct-=ACCELERATION;
-            height+=(3-2*drct)*(vlct+ACCELERATION/2);
     }
-    else{ //需要减速且到减速的最后100ms
+    else{ //需要减速且到减速的最后200ms
+        delay(100);
         vlct=0;
         height=(target-1)*3000;
     }
@@ -192,5 +188,50 @@ void back(){
 }
 
 void show(){
-    Serial.print(char((height/3000)*3+drct+20)); //输出
+    lcd.setCursor(2,1);
+    i=5-countdigit(height)-(height==0);
+    while(i--){
+        lcd.write(' ');
+    }
+    lcd.print(height);
+    lcd.setCursor(8,1);
+    lcd.print(drct);
+    lcd.setCursor(10,1);
+    i=3-countdigit(vlct)-(vlct==0);
+    while(i--){
+        lcd.write(' ');
+    }
+    lcd.print(vlct);
+    //Serial.print(char((height/3000)*3+drct+20)); //输出
+}
+
+int countdigit(int p){ //求整数位数
+    int count=0;
+    while(p>0){
+        p/=10;
+        count++;
+    }
+    return count;
+}
+
+void inheritdrct(){ //继承指令方向，若指令无方向，则继承之前电梯方向
+    if(drct<2){
+        if(order[(target-1)*3+1]==1){
+            drct=1;
+            return;
+        }
+        if(order[(target-1)*3+2]==1){
+            drct=2;
+            return;
+        }
+    }
+    else{
+        if(order[(target-1)*3+2]==1){
+            return;
+        }
+        if(order[(target-1)*3+1]==1){
+            drct=1;
+            return;
+        }
+    }
 }

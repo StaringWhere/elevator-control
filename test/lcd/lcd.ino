@@ -8,9 +8,10 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 void setup() {
     //设置LCD要显示的列数、行数，即2行16列
     lcd.begin(16, 2);
-
-    //输出Hello World
-    lcd.print("hello, world!");
+    int i=5;
+    while(i--){
+        lcd.write('a');
+    }
 }
 
 void loop() {

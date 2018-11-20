@@ -46,7 +46,7 @@ void loop(){
     lcd.setCursor(0,1);
     lcd.print(target);
     if(target==0){
-        drct==0;
+        drct=0;
         //返回一层计时
         if(check==0){
             check=1;
