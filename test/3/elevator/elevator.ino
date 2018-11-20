@@ -66,11 +66,8 @@ void loop(){
         else if(order[(target-1)*3+3-drct]==1)
             drct=3-drct;
         delorder(); //删除已完成指令
-        open(); //开门
     }
-    delay(50);
-    show(); //错开接收时间
-    delay(50);
+    delay(100);
 }
 
 void getorder(){ //更新指令串
