@@ -88,13 +88,7 @@
 3. 电梯一旦进入静止状态（指令串为空），即触发中断计时器，若不被打断则一定时间后向指令串中添加归位指令。 
 4. 电梯一旦脱离静止状态（有指令加入），则中断计时，并清除指令串中的归位指令；同时根据目标指令所在位置决定电梯运行。  
 
-#显示  
-lcd屏
-    
-如果使用了 MsTimer2 庫,
-則 pin 11 和 pin 3 就不能再用做 PWM 輸出了
-3, 5, 6, 9, 10, and 11
 
-
-测试日志：
-1. 开门
+#### Things to improve
+- [ ] Check timer here to alert users that they are holding the door open to long
+- [ ] 更智能的返回一层策略

@@ -22,8 +22,8 @@ char order[NUM_OF_ORDER]={'\0'}; //无序指令串
 int target=0; //目标楼层/层,0代表无指令
 int door=0; //0关门，1开门
 int check=0;
-unsigned long stop=0;
-unsigned long start=0;
+unsigned long stoptime=0;
+unsigned long starttime=0;
 
 void setup() {
     Serial.begin(9600);
@@ -37,7 +37,11 @@ void setup() {
 }
 
 void loop(){
+    starttime=millis();
     getorder(); //更新命令串
+    stoptime=millis();
+    lcd.setCursor(0,1);
+    lcd.print(stoptime-starttime);
     for(i=0;i<NUM_OF_ORDER;i++){ //显示指令串
         lcd.setCursor(i,0);
         lcd.write(order[i]+48);

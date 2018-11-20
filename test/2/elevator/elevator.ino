@@ -52,23 +52,12 @@ void loop(){
             stoptime=starttime;
         }
         stoptime=millis();
-        if(stoptime-starttime>=60000)
+        if((stoptime-starttime)>=60000)
             order[0]=check; //使开关门能够刷新计时
         return;
     }
     check=0;
-    move(); //根据指令更新电梯状态(方向，高度，速度)
-    if(height==(target-1)*3000){ //到达目标楼层
-        //继承指令方向，若指令无方向，则继承之前电梯方向（search取消了drct为0的可能）
-        if(order[(target-1)*3+drct]==1); 
-        else if(order[(target-1)*3+3-drct]==1)
-            drct=3-drct;
-        delorder(); //删除已完成指令
-        open(); //开门
-    }
-    delay(50);
-    show(); //错开接收时间
-    delay(50);
+    delay(5000);
 }
 
 void getorder(){ //更新指令串
