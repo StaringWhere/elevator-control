@@ -205,7 +205,7 @@ void show(){
         lcd.write(' ');
     }
     lcd.print(vlct);
-    Serial.print(char((height/3000)*3+drct+20)); //输出
+    //Serial.print(char((height/3000)*3+drct+20)); //输出
 }
 
 int countdigit(int p){ //求整数位数

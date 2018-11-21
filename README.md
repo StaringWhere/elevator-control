@@ -93,6 +93,7 @@
 
 
 #### Things to improve
+- [ ] 更符合现实的开关门逻辑
 - [ ] 外部中断和millis是否存在冲突
 - [ ] Check timer here to alert users that they are holding the door open to long
 - [ ] 更智能的返回一层策略
