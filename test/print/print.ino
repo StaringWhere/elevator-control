@@ -1,5 +1,5 @@
 #include<Arduino.h>
-
+//大概19ms/loop
 unsigned long starttime;
 unsigned long stoptime;
 unsigned long looptime;
@@ -8,8 +8,8 @@ int i;
 int rec;
 int flour=1;
 int drct=0;
-int H[8]={A4,3,6,A1,13,7,12,9};
-int L[8]={2,11,10,A3,8,A2,4,5};
+int H[8]={6,11,A3,9,5,A2,4,A0};
+int L[8]={10,3,2,7,A1,8,12,13};
 int uparrow[8][8]={
     0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,1,0,
@@ -116,7 +116,7 @@ void setup() {
     for(i=2;i<=13;i++){
         pinMode(i,OUTPUT);
     }
-    for(i=A1;i<=A4;i++){
+    for(i=A0;i<=A3;i++){
         pinMode(i,OUTPUT);
     }
     for(i=0;i<8;i++)
