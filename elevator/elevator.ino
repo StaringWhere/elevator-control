@@ -228,7 +228,7 @@ void show(){
     showvlct();
     showdoor();
     showtarget();
-    //led();
+    led();
 }
 void led(){ //更新led显示
     Serial.print(char((height/3000)*3+drct+20)); //输出
