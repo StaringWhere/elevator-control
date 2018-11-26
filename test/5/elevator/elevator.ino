@@ -25,12 +25,64 @@ int hold=0; //电梯是否无动作（包括开关门），0为有动作，1为�
 unsigned long stoptime=0;
 unsigned long starttime=0;
 
+//门的各个状态
+byte door0[8] = {
+    B11111,
+    B11111,
+    B11111,
+    B11111,
+    B11111,
+    B11111,
+    B11111,
+};
+byte door1[8] = {
+    B11110,
+    B11110,
+    B11110,
+    B11110,
+    B11110,
+    B11110,
+    B11110,
+};
+byte door2[8] = {
+    B11100,
+    B11100,
+    B11100,
+    B11100,
+    B11100,
+    B11100,
+    B11100,
+};
+byte door3[8] = {
+    B11000,
+    B11000,
+    B11000,
+    B11000,
+    B11000,
+    B11000,
+    B11000,
+};
+byte door4[8] = {
+    B10000,
+    B10000,
+    B10000,
+    B10000,
+    B10000,
+    B10000,
+    B10000,
+};
+
 void setup() {
     Serial.begin(9600);
     pinMode(OPEN_PIN,INPUT);
     pinMode(CLOSE_PIN,INPUT);
     attachInterrupt(digitalPinToInterrupt(2),open,RISING); 
     attachInterrupt(digitalPinToInterrupt(3),close,RISING);
+    lcd.createChar(0, door0);
+    lcd.createChar(1, door1);
+    lcd.createChar(2, door2);
+    lcd.createChar(3, door3);
+    lcd.createChar(4, door4);
     lcd.begin(16, 2);
     while(Serial.available()<=0); //等待开始
     Serial.read(); //读掉's'
@@ -234,7 +286,7 @@ void show(){
     led();
 }
 void led(){ //更新led显示
-    Serial.print(char((height/3000)*3+drct+20)); //输出
+    Serial.print(char((height/1500)*3+drct+20)); //输出
 }
 void showorder(){ //更新指令串显示
     lcd.setCursor(0,0);
@@ -263,7 +315,23 @@ void showvlct(){ //更新速度显示
 }
 void showdoor(){ //更新门的状态显示
     lcd.setCursor(14,1);
-    lcd.print(door);
+    switch(door){
+    case 0:
+        lcd.write(byte(0));
+        break;
+    case 1:
+        lcd.write(byte(1));
+        break;
+    case 2:
+        lcd.write(byte(2));
+        break;
+    case 3:
+        lcd.write(byte(3));
+        break;
+    case 4:
+        lcd.write(byte(4));
+        break;
+    }
 }
 void showtarget(){ //更新目标楼层显示
     lcd.setCursor(0,1);

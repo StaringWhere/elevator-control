@@ -121,10 +121,10 @@ void setup() {
 
 void loop(){
     i=Serial.read();
-    if(i>=20&&i<35){
+    if(i>=20&&i<46){
         rec=i-20;
-        flour=rec/3+1;
         drct=rec%3;
+        flour=rec/6+1+(rec/3)%2;
     }
     else
     switch(flour){

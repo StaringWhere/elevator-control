@@ -103,8 +103,10 @@
 
 
 #### Things to improve
-- [ ] 手动和自动警报系统
-- [ ] 更好的楼层显示
+- [ ] 更好的开关门显示
+- [x] 手动报警
+- [ ] 自动警报
+- [x] 更好的楼层显示
 - [x] 解决lcd屏胡乱显示
 - [x] 静止方向的电梯在开门期间要不停接收命令，并根据第一条命令调整方向
 - [ ] 返回一层不开门
@@ -112,4 +114,3 @@
 - [x] 外部中断和millis是否存在冲突
 - [ ] Check timer here to alert users that they are holding the door open to long
 - [ ] 更智能的返回一层策略
-- [ ] 消隐
