@@ -47,7 +47,7 @@ void setup(){
 	for(i=11;i<13;i++)
 		pinMode(i,OUTPUT);
 	pinMode(START_PIN,INPUT);
-	pinMode(A5,OUTPUT);
+	pinMode(BUZZER_PIN,OUTPUT);
     Serial.begin(9600);
     irrecv.enableIRIn(); //启动接收器
 	while(digitalRead(START_PIN)==LOW); //等待开始
@@ -124,10 +124,10 @@ void check(){ //检测输入
 			digitalWrite(CLOSE_PIN,LOW);
 			break;
 		case 0xFF02FD: //警报开
-			digitalWrite(A5,HIGH);
+			digitalWrite(BUZZER_PIN,HIGH);
 			break;
 		case 0xFF22DD: //警报关
-			digitalWrite(A5,LOW);
+			digitalWrite(BUZZER_PIN,LOW);
 			break;
 		}
 		irrecv.resume(); //接收下一个值
