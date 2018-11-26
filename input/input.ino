@@ -31,6 +31,7 @@ flag下标-指令-引脚
 #define OPEN_PIN 11 //开门
 #define CLOSE_PIN 12 //关门
 #define START_PIN 13 //开始键，重置键
+#define BUZZER_PIN A5 //警报
 
 char order[NUM_OF_ORDER]={'\0'}; //无序指令串
 int i;
@@ -46,6 +47,7 @@ void setup(){
 	for(i=11;i<13;i++)
 		pinMode(i,OUTPUT);
 	pinMode(START_PIN,INPUT);
+	pinMode(A5,OUTPUT);
     Serial.begin(9600);
     irrecv.enableIRIn(); //启动接收器
 	while(digitalRead(START_PIN)==LOW); //等待开始
@@ -120,6 +122,12 @@ void check(){ //检测输入
 		case 0xFFE01F: //关门
 			digitalWrite(CLOSE_PIN,HIGH);
 			digitalWrite(CLOSE_PIN,LOW);
+			break;
+		case 0xFF02FD: //警报开
+			digitalWrite(A5,HIGH);
+			break;
+		case 0xFF22DD: //警报关
+			digitalWrite(A5,LOW);
 			break;
 		}
 		irrecv.resume(); //接收下一个值

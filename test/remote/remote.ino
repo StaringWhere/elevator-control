@@ -11,6 +11,7 @@ decode_results results;
 
 void setup(){
     pinMode(REMOTE_PIN,INPUT);
+    pinMode(A5,OUTPUT);
     Serial.begin(9600);
     irrecv.enableIRIn(); //启动接收器
     Serial.println('1');
@@ -21,8 +22,11 @@ void loop(){
 		// Serial.println(results.value, HEX); //以16进制换行输出接收代码
         Serial.println(results.value,HEX);
 		switch(results.value){
-		case 0xFF30CF: 
-            Serial.println('1');
+		case 0xFF02FD: 
+            digitalWrite(A5,HIGH);
+			break;
+		case 0xFF22DD: 
+            digitalWrite(A5,LOW);
 			break;
 		}
 		irrecv.resume(); //接收下一个值
